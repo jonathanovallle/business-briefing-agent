@@ -1,4 +1,3 @@
-# evaluate.py
 import yaml, json
 from pathlib import Path
 from agent.agent import Retriever, BusinessAgent

@@ -1,17 +1,10 @@
-# tools.py
-import os, csv, io, json, subprocess, sys
-
-# If using Ollama locally, implement llm_run
-def llm_run_ollama(prompt: str):
-    # calls: ollama run mistral "<prompt>"
-    proc = subprocess.run(["ollama", "run", "mistral", prompt], capture_output=True, text=True)
-    if proc.returncode != 0:
-        return proc.stderr or "LLM error"
-    return proc.stdout
+import os, csv
 
 def extract_metrics_from_csvs(csv_dir="src/data/csvs"):
-    # aggregate simple metrics from CSVs
-    out = []
+    metrics = {}
+    if not os.path.exists(csv_dir):
+        return {"metrics": {}, "summary": "No CSV files found"}
+
     for fname in os.listdir(csv_dir):
         if not fname.lower().endswith(".csv"):
             continue
@@ -19,23 +12,65 @@ def extract_metrics_from_csvs(csv_dir="src/data/csvs"):
         with open(path, "r", encoding="utf-8") as f:
             reader = csv.DictReader(f)
             rows = list(reader)
-            out.append(f"{fname}: rows={len(rows)}")
-            # example: if 'rev' column exists, sum it
-            if rows and 'rev' in rows[0]:
+            metrics[f"{fname}_rows"] = len(rows)
+
+            if rows and "value" in rows[0]:
                 total = 0.0
                 for r in rows:
                     try:
-                        total += float(r.get('rev',0))
+                        total += float(r.get("value", 0))
                     except:
                         pass
-                out.append(f"{fname}: total_rev={total}")
-    return "\n".join(out) or "No CSVs or no metrics found"
+                metrics[f"{fname}_total_value"] = total
 
-def create_actions_from_summary(text: str):
-    # simple heuristics to create 3 actions
-    actions = [
-        "1) Collect missing data and update the dashboard within 3 days.",
-        "2) Prioritize top 2 risks and assign owners.",
-        "3) Open a tracking issue and create a mitigation plan."
-    ]
-    return "\n".join(actions)
+    return {"metrics": metrics, "summary": "Metrics extracted successfully"}
+
+
+def analyze_risks(context_text: str, metrics: dict):
+    context_lower = context_text.lower()
+
+    financial_risk = "Low"
+    operational_risk = "Low"
+    data_risk = "Low"
+
+    # Financial risk logic
+    if "marketing spend increased" in context_lower and "revenue increased" not in context_lower:
+        financial_risk = "High"
+    elif "marketing spend increased" in context_lower:
+        financial_risk = "Medium"
+
+    # Operational risk logic
+    if "churn increased" in context_lower:
+        operational_risk = "High"
+    elif "churn decreased" in context_lower:
+        operational_risk = "Low"
+
+    # Data risk logic
+    if not metrics:
+        data_risk = "High"
+    elif len(metrics) < 2:
+        data_risk = "Medium"
+
+    return {
+        "financial_risk": financial_risk,
+        "operational_risk": operational_risk,
+        "data_risk": data_risk
+    }
+
+
+def generate_dynamic_actions(risks: dict):
+    actions = []
+
+    if risks["financial_risk"] in ["High", "Medium"]:
+        actions.append("Conduct marketing ROI analysis and cost efficiency review.")
+
+    if risks["operational_risk"] == "High":
+        actions.append("Launch immediate customer retention and churn mitigation strategy.")
+
+    if risks["data_risk"] in ["High", "Medium"]:
+        actions.append("Implement data completeness audit and improve reporting visibility.")
+
+    if not actions:
+        actions.append("Maintain current strategy and monitor KPIs weekly.")
+
+    return actions

@@ -1,4 +1,3 @@
-# build_index.py
 import os, json
 from sentence_transformers import SentenceTransformer
 import numpy as np

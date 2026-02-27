@@ -1,54 +1,49 @@
-# main.py
 from agent.agent import Retriever, BusinessAgent
-from agent.tools import extract_metrics_from_csvs, create_actions_from_summary, llm_run_ollama
+from agent.tools import extract_metrics_from_csvs
 
-def format_briefing(output: dict):
-    reflection = output.get("reflection", {})
-    tool_logs = output.get("tool_logs", [])
-    
-    confidence = reflection.get("confidence", 0)
-    
-    if confidence >= 0.8:
-        health = "🟢 Low Risk"
-    elif confidence >= 0.5:
-        health = "🟡 Moderate Risk"
-    else:
-        health = "🔴 High Risk"
-    
-    print("\n" + "="*60)
-    print("EXECUTIVE PROJECT BRIEFING")
-    print("="*60)
-    print(f"\nProject Health: {health}")
-    
-    print("\nKey Summary:")
-    print("-"*60)
-    print(output.get("plan", "No summary available"))
-    
-    print("\nRecommended Actions:")
-    print("-"*60)
-    for log in tool_logs:
-        if log["name"] == "create_actions" and log["success"]:
-            print(log["output"])
-    
-    print("\nConfidence Level:")
-    print("-"*60)
-    print(f"{confidence * 100:.0f}% based on tool execution success")
-    print("="*60 + "\n")
+def format_executive_briefing(output: dict):
 
-def run_demo(use_llm=False):
+    risks = output.get("risk_breakdown", {})
+    actions = output.get("recommended_actions", [])
+    confidence = output.get("reflection", {}).get("confidence", 0)
+
+    print("\n" + "="*70)
+    print("EXECUTIVE PROJECT RISK REPORT")
+    print("="*70)
+
+    print("\nPROJECT SUMMARY")
+    print("-"*70)
+    print(output.get("summary", ""))
+
+    print("\nRISK BREAKDOWN")
+    print("-"*70)
+    for k, v in risks.items():
+        print(f"{k.replace('_',' ').title()}: {v}")
+
+    print("\nSTRATEGIC ACTIONS")
+    print("-"*70)
+    for i, a in enumerate(actions, 1):
+        print(f"{i}. {a}")
+
+    print("\nCONFIDENCE LEVEL")
+    print("-"*70)
+    print(f"{confidence * 100:.0f}% based on system evaluation")
+
+    print("="*70 + "\n")
+
+
+def run_demo():
     retriever = Retriever()
     tools = {
-        "extract_metrics": extract_metrics_from_csvs,
-        "create_actions": create_actions_from_summary
+        "extract_metrics": extract_metrics_from_csvs
     }
-    if use_llm:
-        tools["llm_run"] = llm_run_ollama
 
-    agent = BusinessAgent(retriever, tools, use_llm_local=use_llm)
-    query = "Give me an executive briefing about project risks and recommended actions"
-    out = agent.handle(query)
-    
-    format_briefing(out)
+    agent = BusinessAgent(retriever, tools)
+    query = "Provide an executive risk assessment and strategic recommendations"
+    output = agent.handle(query)
+
+    format_executive_briefing(output)
+
 
 if __name__ == "__main__":
-    run_demo(use_llm=False)
+    run_demo()
