@@ -52,7 +52,7 @@ class BusinessAgent:
         # fallback rule based summary
         lines = context_texts.splitlines()
         top = [l.strip() for l in lines if l.strip()][:6]
-        return "Resumen (reglas):\n" + "\n".join(top)
+        return "Summary (rule-based):\n" + "\n".join(top)
 
     def reflect(self, retrieval_scores, tool_logs):
  # robust reflection: prefer tool success rate as confidence
