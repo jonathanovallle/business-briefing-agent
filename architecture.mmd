@@ -6,7 +6,6 @@ flowchart LR
   Tools --> Metrics["extract_metrics"]
   Tools --> RiskActions["analyze_risks + generate_dynamic_actions"]
   Tools --> LLM["Optional LLM for summary"]
-  RiskActions --> External["Issue tracker / Email / Dashboard (mock)"]
   Agent --> Reflection["Reflection Module (confidence calculation)"]
   Reflection --> Agent
   Agent --> Output["Executive Report: Summary + Risk Breakdown + Recommended Actions + Confidence"]
