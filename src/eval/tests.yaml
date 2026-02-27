@@ -1,0 +1,7 @@
+- id: t1
+  prompt: "Dame un resumen ejecutivo sobre el proyecto y riesgos"
+  expect_keywords: ["riesgos","priorizar","ingresos"]
+
+- id: t2
+  prompt: "¿Qué acciones recomiendas?"
+  expect_keywords: ["reunir","priorizar","crear issue"]
