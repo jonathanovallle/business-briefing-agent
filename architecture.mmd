@@ -1,8 +1,12 @@
 flowchart LR
-  U["User / Stakeholder"] -->|Requests briefing| Agent["Agent Core"]
+  U["User / Stakeholder"] -->|Requests executive briefing| Agent["Agent Core"]
   Agent --> Retriever["Retriever (Embeddings + FAISS)"]
-  Retriever --> DataStore["Docs / CSVs"]
-  Agent --> Tools["Tools Layer (metrics, actions, optional LLM)"]
-  Tools --> External["Issue tracker / Email (mock)"]
-  Agent --> Reflection["Reflection Module"]
+  Retriever --> DataStore["Project Docs / CSVs"]
+  Agent --> Tools["Tools Layer"]
+  Tools --> Metrics["extract_metrics"]
+  Tools --> RiskActions["analyze_risks + generate_dynamic_actions"]
+  Tools --> LLM["Optional LLM for summary"]
+  RiskActions --> External["Issue tracker / Email / Dashboard (mock)"]
+  Agent --> Reflection["Reflection Module (confidence calculation)"]
   Reflection --> Agent
+  Agent --> Output["Executive Report: Summary + Risk Breakdown + Recommended Actions + Confidence"]

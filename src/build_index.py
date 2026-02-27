@@ -6,7 +6,7 @@ import faiss
 DATA_DIR = "src/data/docs"
 INDEX_PATH = "src/data/faiss_index.bin"
 META_PATH = "src/data/faiss_meta.json"
-EMBED_MODEL = "all-MiniLM-L6-v2"  # pequeño y rápido
+EMBED_MODEL = "all-MiniLM-L6-v2"
 
 def load_docs(data_dir=DATA_DIR):
     docs = {}
