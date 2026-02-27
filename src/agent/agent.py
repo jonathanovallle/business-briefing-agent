@@ -45,7 +45,7 @@ class BusinessAgent:
 
     def plan(self, query, context_texts):
         # simple plan: extract bullets + metrics + actions
-        prompt = f"Puntos clave: {query}\n\nContexto:\n{context_texts[:4000]}"
+        prompt = f"Key points: {query}\n\nContext:\n{context_texts[:4000]}"
         if self.use_llm_local and "llm_run" in self.tools:
             out = self.tools["llm_run"](prompt)
             return out
@@ -55,11 +55,10 @@ class BusinessAgent:
         return "Resumen (reglas):\n" + "\n".join(top)
 
     def reflect(self, retrieval_scores, tool_logs):
-    # reflection robusta: usamos success_rate como confidence
-    # y normalizamos avg_distance si es un valor absurdo
+ # robust reflection: prefer tool success rate as confidence
         try:
             avg_score = float(sum(retrieval_scores) / max(1, len(retrieval_scores)))
-            # si la distancia es ridículamente grande, la ignoramos
+            # ignore absurd distances
             if avg_score > 1e6 or avg_score != avg_score:  # >1e6 o NaN
                 avg_score_norm = None
             else:

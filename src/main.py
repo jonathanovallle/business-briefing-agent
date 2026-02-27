@@ -13,7 +13,7 @@ def run_demo(use_llm=False):
         tools["llm_run"] = llm_run_ollama
 
     agent = BusinessAgent(retriever, tools, use_llm_local=use_llm)
-    query = "Hazme un briefing ejecutivo sobre riesgos y acciones para este proyecto"
+    query = "Give me an executive briefing about project risks and recommended actions"
     out = agent.handle(query)
     print(json.dumps(out, indent=2, ensure_ascii=False))
 

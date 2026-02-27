@@ -34,8 +34,8 @@ def extract_metrics_from_csvs(csv_dir="src/data/csvs"):
 def create_actions_from_summary(text: str):
     # simple heuristics to create 3 actions
     actions = [
-        "1) Reunir datos faltantes y actualizar dashboard en 3 días.",
-        "2) Priorizar top 2 riesgos con owner asignado.",
-        "3) Abrir issue de seguimiento y plan de mitigación."
+        "1) Collect missing data and update the dashboard within 3 days.",
+        "2) Prioritize top 2 risks and assign owners.",
+        "3) Open a tracking issue and create a mitigation plan."
     ]
     return "\n".join(actions)

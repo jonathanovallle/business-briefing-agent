@@ -1,7 +1,7 @@
 - id: t1
-  prompt: "Dame un resumen ejecutivo sobre el proyecto y riesgos"
-  expect_keywords: ["riesgos","priorizar","ingresos"]
+  prompt: "Give me an executive summary about the project and risks"
+  expect_keywords: ["risks","prioritize","revenue"]
 
 - id: t2
-  prompt: "¿Qué acciones recomiendas?"
-  expect_keywords: ["reunir","priorizar","crear issue"]
+  prompt: "What actions do you recommend?"
+  expect_keywords: ["collect","prioritize","open issue"]
