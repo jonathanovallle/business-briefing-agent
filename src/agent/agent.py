@@ -55,11 +55,28 @@ class BusinessAgent:
         return "Resumen (reglas):\n" + "\n".join(top)
 
     def reflect(self, retrieval_scores, tool_logs):
-        # reflection simple: avg distance -> confidence
-        avg_score = float(sum(retrieval_scores)/max(1,len(retrieval_scores)))
-        success_rate = sum(1 for t in tool_logs if t.success)/max(1,len(tool_logs))
-        conf = max(0.0, 1 - avg_score/10)  # heuristic
-        return {"avg_distance": avg_score, "tool_success": success_rate, "confidence": round(conf,2)}
+    # reflection robusta: usamos success_rate como confidence
+    # y normalizamos avg_distance si es un valor absurdo
+        try:
+            avg_score = float(sum(retrieval_scores) / max(1, len(retrieval_scores)))
+            # si la distancia es ridículamente grande, la ignoramos
+            if avg_score > 1e6 or avg_score != avg_score:  # >1e6 o NaN
+                avg_score_norm = None
+            else:
+                avg_score_norm = avg_score
+        except Exception:
+            avg_score_norm = None
+
+        success_rate = sum(1 for t in tool_logs if t.success) / max(1, len(tool_logs))
+
+        # confidence estable basado en éxito de las tools
+        confidence = round(success_rate, 2)
+
+        return {
+            "avg_distance": avg_score_norm,
+            "tool_success": success_rate,
+            "confidence": confidence
+        }
 
     def handle(self, query: str):
         contexts, scores = self.retriever.retrieve(query, k=4)
@@ -70,7 +87,7 @@ class BusinessAgent:
         # call extract_metrics
         if "extract_metrics" in self.tools:
             try:
-                res = self.tools["extract_metrics"](query)
+                res = self.tools["extract_metrics"]()
                 logs.append(ToolResult("extract_metrics", True, res))
             except Exception as e:
                 logs.append(ToolResult("extract_metrics", False, str(e)))
