@@ -1,7 +1,7 @@
-import yaml, json
-from pathlib import Path
+import yaml
+import json
 from agent.agent import Retriever, BusinessAgent
-from agent.tools import extract_metrics_from_csvs, create_actions_from_summary
+from agent.tools import extract_metrics_from_csvs, generate_dynamic_actions
 
 def load_tests(path="src/eval/tests.yaml"):
     return yaml.safe_load(open(path, "r", encoding="utf-8"))
@@ -14,8 +14,8 @@ def score_output(output, expect_keywords):
 def main():
     tests = load_tests()
     retriever = Retriever()
-    tools = {"extract_metrics": extract_metrics_from_csvs, "create_actions": create_actions_from_summary}
-    agent = BusinessAgent(retriever, tools)
+    tools = {"extract_metrics": extract_metrics_from_csvs, "create_actions": generate_dynamic_actions}
+    agent = BusinessAgent(retriever, tools, use_llm_local=False)  # evaluate without LLM by default
     results = []
     for t in tests:
         out = agent.handle(t['prompt'])

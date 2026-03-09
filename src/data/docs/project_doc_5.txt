@@ -1,0 +1,5 @@
+Project doc 5
+Revenue increased by 10% compared to previous period.
+Marketing spend increased in channel 5.
+Churn changed by -2%.
+Operational notes: backlog issues: 10.

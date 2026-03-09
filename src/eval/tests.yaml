@@ -1,7 +1,15 @@
 - id: t1
   prompt: "Give me an executive summary about the project and risks"
-  expect_keywords: ["risks","prioritize","revenue"]
+  expect_keywords: ["risk","revenue","marketing"]
 
 - id: t2
   prompt: "What actions do you recommend?"
-  expect_keywords: ["collect","prioritize","open issue"]
+  expect_keywords: ["priority","collect","open"]
+
+- id: t3
+  prompt: "Provide a mitigation plan for churn and data gaps"
+  expect_keywords: ["churn","data","audit","mitigation"]
+
+- id: t4
+  prompt: "Summarize financial status and highlight any concerns"
+  expect_keywords: ["revenue","roi","concern"]
